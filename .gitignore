@@ -1,7 +1,2 @@
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
- 
-# Database
-recipes.db
+# Test
+test.html 
