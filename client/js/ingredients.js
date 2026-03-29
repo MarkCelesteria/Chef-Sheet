@@ -1,3 +1,14 @@
+function unitFromPriceType(priceType) {
+  const map = {
+    per_kg:    'g',
+    per_liter: 'ml',
+    per_piece: 'piece',
+    per_pack:  'piece',
+    per_100g:  'g',
+  };
+  return map[priceType] || 'g';
+}
+
 function renderIngTable() {
   const ings = getIngredients().sort((a, b) => a.name.localeCompare(b.name));
   const wrap = document.getElementById('ing-table-wrap');
@@ -16,10 +27,9 @@ function renderIngTable() {
       <thead>
         <tr>
           <th>Name</th>
-          <th>Unit</th>
           <th>Price</th>
           <th>Priced Per</th>
-          <th>Unit Qty</th>
+          <th>Quantity</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -30,12 +40,12 @@ function renderIngTable() {
 }
 
 function _ingRowHTML(ing) {
+  const unitLabel = _priceTypeLabel(ing.priceType);
   return `
     <tr>
       <td><strong>${esc(ing.name)}</strong></td>
-      <td>${ing.unit}</td>
       <td class="price-cell">₱${ing.price}</td>
-      <td>${ing.priceType}</td>
+      <td>${unitLabel}</td>
       <td>${ing.unitQty}</td>
       <td>
         <div class="actions-cell">
@@ -46,18 +56,28 @@ function _ingRowHTML(ing) {
     </tr>`;
 }
 
+function _priceTypeLabel(priceType) {
+  const labels = {
+    per_piece: 'per piece',
+    per_kg:    'per kg',
+    per_liter: 'per liter',
+    per_pack:  'per pack',
+    per_100g:  'per 100g',
+  };
+  return labels[priceType] || priceType;
+}
+
 function openIngModal(id = null) {
-  document.getElementById('ing-modal-id').value    = id || '';
+  document.getElementById('ing-modal-id').value          = id || '';
   document.getElementById('ing-modal-title').textContent = id ? 'Edit Ingredient' : 'Add Ingredient';
-  document.getElementById('ing-modal-name').value  = '';
-  document.getElementById('ing-modal-price').value = '';
-  document.getElementById('ing-modal-qty').value   = '';
+  document.getElementById('ing-modal-name').value        = '';
+  document.getElementById('ing-modal-price').value       = '';
+  document.getElementById('ing-modal-qty').value         = '';
 
   if (id) {
     const ing = getIngredients().find(i => i.id === id);
     if (ing) {
       document.getElementById('ing-modal-name').value      = ing.name;
-      document.getElementById('ing-modal-unit').value      = ing.unit;
       document.getElementById('ing-modal-price').value     = ing.price;
       document.getElementById('ing-modal-pricetype').value = ing.priceType;
       document.getElementById('ing-modal-qty').value       = ing.unitQty;
@@ -76,18 +96,19 @@ function saveIngredient() {
   const name  = document.getElementById('ing-modal-name').value.trim();
   const price = parseFloat(document.getElementById('ing-modal-price').value);
   const qty   = parseFloat(document.getElementById('ing-modal-qty').value);
+  const priceType = document.getElementById('ing-modal-pricetype').value;
 
-  if (!name)           { toast('Name is required'); return; }
+  if (!name)            { toast('Name is required'); return; }
   if (!price || price <= 0) { toast('Please enter a valid price'); return; }
-  if (!qty   || qty   <= 0) { toast('Please enter a valid unit quantity'); return; }
+  if (!qty   || qty   <= 0) { toast('Please enter a valid quantity'); return; }
 
   const id  = document.getElementById('ing-modal-id').value;
   const ing = {
     id:        id || uid(),
     name,
-    unit:      document.getElementById('ing-modal-unit').value,
+    unit:      unitFromPriceType(priceType),
     price,
-    priceType: document.getElementById('ing-modal-pricetype').value,
+    priceType,
     unitQty:   qty,
   };
 

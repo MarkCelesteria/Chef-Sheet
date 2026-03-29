@@ -173,8 +173,9 @@ nav {
 }
 
 .card-photo {
-width: 150px;
-    min-width: 150px;
+    width: 220px;
+    min-width: 220px;
+    aspect-ratio: 4 / 3;
     background: #e8e5e0;
     display: flex;
     align-items: center;
@@ -184,6 +185,7 @@ width: 150px;
     font-weight: 500;
     overflow: hidden;
     position: relative;
+    flex-shrink: 0;
 }
 .card-photo img { width: 100%; height: 100%; object-fit: cover; }
 .card-photo-placeholder {
@@ -208,7 +210,7 @@ width: 150px;
     letter-spacing: -.2px;
     line-height: 1.2;
 }
-.card-desc::-webkit-file-upload-button {
+.card-desc {
     font-size: 13px;
     color: var(--text-2);
     line-height: 1.55;
@@ -325,6 +327,15 @@ width: 150px;
     transition: opacity .15s;
 }
 .photo-picker:hover .photo-overlay { opacity: 1; }
+.photo-picker.drag-over {
+    border-color: var(--red);
+    background: var(--red-light);
+    color: var(--red);
+}
+.photo-picker.drag-over .photo-overlay {
+    opacity: 1;
+}
+
 
 .fields-col { flex: 1; display: flex; flex-direction: column; gap: 14px; }
 
@@ -627,14 +638,23 @@ select.field-input { cursor: pointer; }
 ::-webkit-scrollbar-thumb { background: #d8d5d0; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #b8b5b0; }
 
-/* responsive */
 @media (max-width: 640px) {
     .page { padding: 20px 16px; }
     nav { padding: 0 16px; }
-        .detail-hero { flex-direction: column; }
-        .detail-photo { width: 100%; height: 200px; }
-        .fields-row, .fields-row-3 { grid-template-columns: 1fr; }
-        .photo-field-row { flex-direction: column; }
-        .photo-picker { width: 100%; }
-        .ing-row, .ing-header { grid-template-columns: 1fr 70px 60px 70px 30px; }
+
+    .recipe-card {
+        flex-direction: column;
+    }
+    .card-photo {
+        width: 100%;
+        min-width: unset;
+        aspect-ratio: 16 / 9;
+    }
+
+    .detail-hero { flex-direction: column; }
+    .detail-photo { width: 100%; height: 200px; }
+    .fields-row, .fields-row-3 { grid-template-columns: 1fr; }
+    .photo-field-row { flex-direction: column; }
+    .photo-picker { width: 100%; }
+    .ing-row, .ing-header { grid-template-columns: 1fr 70px 60px 70px 30px; }
 }

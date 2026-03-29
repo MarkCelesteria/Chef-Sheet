@@ -201,7 +201,7 @@
   <div class="modal">
     <div class="modal-header">
       <h3 id="ing-modal-title">Add Ingredient</h3>
-      <p>Set the name, unit and pricing</p>
+      <p>Set the name and pricing</p>
     </div>
     <div class="modal-body">
       <input type="hidden" id="ing-modal-id">
@@ -209,18 +209,9 @@
         <label class="field-label">Name *</label>
         <input class="field-input" id="ing-modal-name" placeholder="e.g. Chicken Breast">
       </div>
-      <div class="fields-row">
-        <div class="field-group">
-          <label class="field-label">Default Unit</label>
-          <select class="field-input" id="ing-modal-unit">
-            <option>g</option><option>ml</option><option>piece</option>
-            <option>kg</option><option>liter</option><option>tbsp</option><option>tsp</option><option>cup</option>
-          </select>
-        </div>
-        <div class="field-group">
-          <label class="field-label">Price (₱)</label>
-          <input class="field-input" id="ing-modal-price" type="number" min="0.01" step="any" placeholder="0.00">
-        </div>
+      <div class="field-group">
+        <label class="field-label">Price (₱)</label>
+        <input class="field-input" id="ing-modal-price" type="number" min="0.01" step="any" placeholder="0.00">
       </div>
       <div class="fields-row">
         <div class="field-group">
@@ -231,11 +222,11 @@
           </select>
         </div>
         <div class="field-group">
-          <label class="field-label">Unit Quantity</label>
-          <input class="field-input" id="ing-modal-qty" type="number" min="0.01" step="any" placeholder="1000">
+          <label class="field-label">Quantity</label>
+          <input class="field-input" id="ing-modal-qty" type="number" min="0.01" step="any" placeholder="1">
         </div>
       </div>
-      <p style="font-size:11px;color:var(--text-3)">Tip: Rice ₱50 / per_kg / qty 1000 → cost per gram = ₱0.05</p>
+      <p style="font-size:11px;color:var(--text-3)">Tip: Rice ₱50 / per_kg / qty 5 = ₱50 for 5kg</p>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeIngModal()">Cancel</button>

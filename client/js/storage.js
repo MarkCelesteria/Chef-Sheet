@@ -21,16 +21,16 @@ function seedIfEmpty() {
   if (getIngredients().length > 0) return;
 
   const ings = [
-    { id: uid(), name: 'Egg',               unit: 'piece', price: 8,   priceType: 'per_piece', unitQty: 1    },
-    { id: uid(), name: 'All-purpose Flour', unit: 'g',     price: 55,  priceType: 'per_kg',    unitQty: 1000 },
-    { id: uid(), name: 'Sugar',             unit: 'g',     price: 60,  priceType: 'per_kg',    unitQty: 1000 },
-    { id: uid(), name: 'Butter',            unit: 'g',     price: 180, priceType: 'per_kg',    unitQty: 1000 },
-    { id: uid(), name: 'Milk',              unit: 'ml',    price: 70,  priceType: 'per_liter', unitQty: 1000 },
-    { id: uid(), name: 'Rice',              unit: 'g',     price: 50,  priceType: 'per_kg',    unitQty: 1000 },
-    { id: uid(), name: 'Chicken Breast',    unit: 'g',     price: 220, priceType: 'per_kg',    unitQty: 1000 },
-    { id: uid(), name: 'Garlic',            unit: 'piece', price: 5,   priceType: 'per_piece', unitQty: 1    },
-    { id: uid(), name: 'Onion',             unit: 'piece', price: 15,  priceType: 'per_piece', unitQty: 1    },
-    { id: uid(), name: 'Cooking Oil',       unit: 'ml',    price: 120, priceType: 'per_liter', unitQty: 1000 },
+    { id: uid(), name: 'Egg',               unit: 'piece', price: 250, priceType: 'per_piece', unitQty: 30 },
+    { id: uid(), name: 'All-purpose Flour', unit: 'g',     price: 55,  priceType: 'per_kg',    unitQty: 1  },
+    { id: uid(), name: 'Sugar',             unit: 'g',     price: 60,  priceType: 'per_kg',    unitQty: 1  },
+    { id: uid(), name: 'Butter',            unit: 'g',     price: 180, priceType: 'per_kg',    unitQty: 1  },
+    { id: uid(), name: 'Milk',              unit: 'ml',    price: 70,  priceType: 'per_liter', unitQty: 1  },
+    { id: uid(), name: 'Rice',              unit: 'g',     price: 60,  priceType: 'per_kg',    unitQty: 1  },
+    { id: uid(), name: 'Chicken Breast',    unit: 'g',     price: 220, priceType: 'per_kg',    unitQty: 1  },
+    { id: uid(), name: 'Garlic',            unit: 'piece', price: 12,  priceType: 'per_piece', unitQty: 1  },
+    { id: uid(), name: 'Onion',             unit: 'piece', price: 10,  priceType: 'per_piece', unitQty: 1  },
+    { id: uid(), name: 'Cooking Oil',       unit: 'ml',    price: 120, priceType: 'per_liter', unitQty: 1  },
   ];
   saveIngredients(ings);
 

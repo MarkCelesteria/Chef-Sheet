@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   seedIfEmpty();
+  initPhotoPicker();
+
   document.getElementById('ing-modal').addEventListener('click', function (e) {
     if (e.target === this) closeIngModal();
   });

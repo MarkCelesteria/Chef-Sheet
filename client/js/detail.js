@@ -72,7 +72,7 @@ function _renderIngredientList(r) {
   document.getElementById('detail-ing-list').innerHTML = r.ingredients
     .map(ri => {
       const ing  = ingMap[ri.ingId];
-      const cost = ing ? calcIngCost(ing, ri.qty) : 0;
+      const cost = ing ? calcIngCost(ing, ri.qty, ri.unit) : 0;
       return `
         <div class="ing-row">
           <span class="ing-name">${esc(ing ? ing.name : '?')}</span>

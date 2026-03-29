@@ -41,15 +41,21 @@ function openRecipeForm(id = null) {
 }
 
 // --- Photo handling --- //
-function handlePhotoUpload(evt) {
-  const file = evt.target.files[0];
-  if (!file) return;
+function _processPhotoFile(file) {
+  if (!file || !file.type.startsWith('image/')) {
+    toast('Please use an image file (JPG, PNG, etc.)');
+    return;
+  }
   const reader = new FileReader();
   reader.onload = e => {
     _formPhotoData = e.target.result;
     _setPickerPhoto(_formPhotoData);
   };
   reader.readAsDataURL(file);
+}
+
+function handlePhotoUpload(evt) {
+  _processPhotoFile(evt.target.files[0]);
 }
 
 function _setPickerPhoto(src) {
@@ -69,6 +75,35 @@ function _resetPhotoPicker() {
   document.getElementById('photo-label').style.display = '';
 }
 
+function initPhotoPicker() {
+  const picker = document.getElementById('photo-picker');
+
+  picker.addEventListener('dragover', e => {
+    e.preventDefault();
+    picker.classList.add('drag-over');
+  });
+  picker.addEventListener('dragleave', () => {
+    picker.classList.remove('drag-over');
+  });
+
+  picker.addEventListener('drop', e => {
+    e.preventDefault();
+    picker.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    _processPhotoFile(file);
+  });
+
+  document.getElementById('page-form').addEventListener('paste', e => {
+    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        _processPhotoFile(item.getAsFile());
+        break;
+      }
+    }
+  });
+}
+
 // --- Ingredient picker --- //
 function _populateIngSelect() {
   const ings = getIngredients().sort((a, b) => a.name.localeCompare(b.name));
@@ -80,10 +115,11 @@ function _populateIngSelect() {
 }
 
 function updatePreview() {
-  const id  = document.getElementById('ing-select').value;
-  const qty = parseFloat(document.getElementById('ing-qty').value) || 0;
-  const ing = getIngredients().find(i => i.id === id);
-  const cost = ing ? calcIngCost(ing, qty) : 0;
+  const id       = document.getElementById('ing-select').value;
+  const qty      = parseFloat(document.getElementById('ing-qty').value) || 0;
+  const unit     = document.getElementById('ing-unit').value;
+  const ing      = getIngredients().find(i => i.id === id);
+  const cost     = ing ? calcIngCost(ing, qty, unit) : 0;
 
   document.getElementById('preview-cost').textContent = `₱${cost.toFixed(2)}`;
 
@@ -95,11 +131,11 @@ function updatePreview() {
 }
 
 function addIngRow() {
-  const id  = document.getElementById('ing-select').value;
-  const qty = parseFloat(document.getElementById('ing-qty').value);
+  const id   = document.getElementById('ing-select').value;
+  const qty  = parseFloat(document.getElementById('ing-qty').value);
   const unit = document.getElementById('ing-unit').value;
 
-  if (!id)          { toast('Please select an ingredient'); return; }
+  if (!id)           { toast('Please select an ingredient'); return; }
   if (!qty || qty <= 0) { toast('Please enter a valid quantity'); return; }
 
   _formIngredients.push({ ingId: id, qty, unit });
@@ -126,7 +162,8 @@ function _renderFormIngList() {
   el.innerHTML = _formIngredients
     .map((ri, i) => {
       const ing  = ingMap[ri.ingId];
-      const cost = ing ? calcIngCost(ing, ri.qty) : 0;
+      // Pass ri.unit so conversion is correct
+      const cost = ing ? calcIngCost(ing, ri.qty, ri.unit) : 0;
       return `
         <div class="ing-row">
           <span class="ing-name">${esc(ing ? ing.name : '?')}</span>
@@ -139,14 +176,12 @@ function _renderFormIngList() {
     .join('');
 }
 
-function updateFormCost() {
-  _updateFormCost();
-}
+function updateFormCost() { _updateFormCost(); }
 
 function _updateFormCost() {
   const ingMap = Object.fromEntries(getIngredients().map(i => [i.id, i]));
   const total  = _formIngredients.reduce(
-    (s, ri) => s + calcIngCost(ingMap[ri.ingId], ri.qty),
+    (s, ri) => s + calcIngCost(ingMap[ri.ingId], ri.qty, ri.unit),
     0
   );
   const srv = Math.max(1, parseInt(document.getElementById('form-servings').value) || 1);
