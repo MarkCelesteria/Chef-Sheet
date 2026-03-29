@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chef Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <span class="nav-brand">Chef Sheet</span>
+    <button class="nav-tab active" onclick="showPage('home')">Home</button>
+    <button class="nav-tab" onclick="showPage('ingredients')">Ingredients</button>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!--- HOME PAGE --->
+<div class="page active" id="page-home">
+  <div class="page-header">
+    <div>
+      <h1>My Recipes</h1>
+      <p>Track ingredients, costs, and servings in one place</p>
+    </div>
+    <button class="btn btn-primary btn-pill" onclick="openRecipeForm()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Recipe
+    </button>
+  </div>
+
+  <div class="search-row">
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" type="text" placeholder="Search recipes…" oninput="renderCards()" id="search-input">
+    </div>
+  </div>
+
+  <div class="stat-row" id="stat-row"></div>
+  <div class="cards-list" id="cards-list"></div>
+</div>
+
+<!--- INGREDIENTS PAGE --->
+<div class="page" id="page-ingredients">
+  <div class="page-header">
+    <div>
+      <h1>Ingredients</h1>
+      <p>Master price list — used across all recipes</p>
+    </div>
+    <button class="btn btn-primary" onclick="openIngModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Ingredient
+    </button>
+  </div>
+  <div id="ing-table-wrap"></div>
+</div>
+
+<!--- RECIPE FORM PAGE --->
+<div class="page" id="page-form">
+  <div class="form-page-header">
+    <button class="back-btn" onclick="showPage('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </button>
+    <span class="form-page-title" id="form-page-title">New Recipe</span>
+    <div class="btn-group">
+      <button class="btn btn-ghost" onclick="showPage('home')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveRecipe()">Save Recipe</button>
+    </div>
+  </div>
+
+  <!--- Cost strip --->
+  <div class="cost-strip">
+    <div class="cost-cell">
+      <div class="cost-val" id="form-total-cost">₱0.00</div>
+      <div class="cost-meta">Total Cost</div>
+    </div>
+    <div class="cost-cell">
+      <div class="cost-val green" id="form-per-serving">₱0.00</div>
+      <div class="cost-meta">Per Serving</div>
+    </div>
+    <div class="cost-cell">
+      <div class="cost-val neutral" id="form-ing-count">0</div>
+      <div class="cost-meta">Ingredients</div>
+    </div>
+  </div>
+
+  <!--- Recipe details card --->
+  <div class="card-block">
+    <div class="card-block-title">Recipe Details</div>
+    <div class="photo-field-row">
+      <div class="photo-picker" id="photo-picker" onclick="document.getElementById('photo-file').click()">
+        <input type="file" id="photo-file" accept="image/*" onchange="handlePhotoUpload(event)">
+        <div class="photo-overlay">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Change Photo
+        </div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" id="photo-icon"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span id="photo-label">Add Photo</span>
+      </div>
+      <div class="fields-col">
+        <div class="field-group">
+          <label class="field-label">Recipe Name *</label>
+          <input class="field-input" id="form-name" placeholder="e.g. Garlic Butter Chicken" type="text">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Short Description</label>
+          <input class="field-input" id="form-desc" placeholder="A quick description…" type="text">
+        </div>
+        <div class="fields-row">
+          <div class="field-group">
+            <label class="field-label">Servings</label>
+            <input class="field-input" id="form-servings" type="number" min="1" value="4" oninput="updateFormCost()">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="field-group" style="margin-top:16px">
+      <label class="field-label">Instructions</label>
+      <textarea class="field-input" id="form-instructions" placeholder="Step-by-step cooking instructions…" rows="3"></textarea>
+    </div>
+  </div>
+
+  <!--- Ingredients card --->
+  <div class="card-block">
+    <div class="card-block-title">Ingredients</div>
+    <div class="ing-picker">
+      <div class="field-group">
+        <label class="field-label">Ingredient</label>
+        <select class="field-input" id="ing-select" onchange="updatePreview()">
+          <option value="">Select ingredient…</option>
+        </select>
+      </div>
+      <div class="field-group qty">
+        <label class="field-label">Quantity</label>
+        <input class="field-input" id="ing-qty" type="number" min="0.01" step="any" value="1" oninput="updatePreview()">
+      </div>
+      <div class="field-group unit">
+        <label class="field-label">Unit</label>
+        <select class="field-input" id="ing-unit">
+          <option>g</option><option>ml</option><option>piece</option>
+          <option>kg</option><option>liter</option><option>tbsp</option>
+          <option>tsp</option><option>cup</option>
+        </select>
+      </div>
+      <div class="preview-cost" id="preview-cost">₱0.00</div>
+      <button class="btn btn-success" onclick="addIngRow()">+ Add</button>
+    </div>
+    <div class="ing-header">
+      <span>Ingredient</span><span>Qty</span><span>Unit</span><span>Cost</span><span></span>
+    </div>
+    <div class="ing-list" id="form-ing-list"></div>
+  </div>
+</div>
+
+<!--- RECIPE DETAIL PAGE --->
+<div class="page" id="page-detail">
+  <div class="form-page-header" style="margin-bottom:24px">
+    <button class="back-btn" onclick="showPage('home')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </button>
+    <div class="btn-group" style="margin-left:auto">
+      <button class="btn btn-secondary" onclick="editCurrentRecipe()">Edit Recipe</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteCurrentRecipe()">Delete</button>
+    </div>
+  </div>
+
+  <div class="detail-hero">
+    <div class="detail-photo" id="detail-photo">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity=".3"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    </div>
+    <div class="detail-meta">
+      <h1 class="detail-title" id="detail-title"></h1>
+      <p class="detail-desc" id="detail-desc"></p>
+      <div class="detail-badge" id="detail-badge"></div>
+    </div>
+  </div>
+
+  <div class="cost-strip" id="detail-cost-strip"></div>
+
+  <div class="card-block">
+    <div class="card-block-title">Ingredients</div>
+    <div class="ing-header">
+      <span>Ingredient</span><span>Qty</span><span>Unit</span><span>Cost</span><span></span>
+    </div>
+    <div class="ing-list" id="detail-ing-list"></div>
+  </div>
+
+  <div class="card-block" id="detail-instr-block" style="display:none">
+    <div class="card-block-title">Instructions</div>
+    <div id="detail-instructions" style="font-size:14px;color:var(--text-2);line-height:1.8;white-space:pre-wrap"></div>
+  </div>
+</div>
+
+<!--- INGREDIENT MODAL --->
+<div class="modal-overlay" id="ing-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="ing-modal-title">Add Ingredient</h3>
+      <p>Set the name, unit and pricing</p>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ing-modal-id">
+      <div class="field-group">
+        <label class="field-label">Name *</label>
+        <input class="field-input" id="ing-modal-name" placeholder="e.g. Chicken Breast">
+      </div>
+      <div class="fields-row">
+        <div class="field-group">
+          <label class="field-label">Default Unit</label>
+          <select class="field-input" id="ing-modal-unit">
+            <option>g</option><option>ml</option><option>piece</option>
+            <option>kg</option><option>liter</option><option>tbsp</option><option>tsp</option><option>cup</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Price (₱)</label>
+          <input class="field-input" id="ing-modal-price" type="number" min="0.01" step="any" placeholder="0.00">
+        </div>
+      </div>
+      <div class="fields-row">
+        <div class="field-group">
+          <label class="field-label">Priced Per</label>
+          <select class="field-input" id="ing-modal-pricetype">
+            <option>per_piece</option><option>per_kg</option><option>per_liter</option>
+            <option>per_pack</option><option>per_100g</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Unit Quantity</label>
+          <input class="field-input" id="ing-modal-qty" type="number" min="0.01" step="any" placeholder="1000">
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--text-3)">Tip: Rice ₱50 / per_kg / qty 1000 → cost per gram = ₱0.05</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeIngModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveIngredient()">Save Ingredient</button>
+    </div>
+  </div>
+</div>
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/home.js"></script>
+<script src="js/detail.js"></script>
+<script src="js/form.js"></script>
+<script src="js/ingredients.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
